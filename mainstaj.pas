@@ -1,21 +1,6 @@
 {
 Copyright 2015, 2016 Проскурнев Артем Сергеевич
 
-This file is part of Staj.
-
-Staj is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Staj is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Staj.  If not, see <http://www.gnu.org/licenses/>.
-
 Этот файл — часть программы Стаж.
 
 Стаж - свободная программа: вы можете перераспространять ее и/или
@@ -32,6 +17,21 @@ along with Staj.  If not, see <http://www.gnu.org/licenses/>.
 Вы должны были получить копию Стандартной общественной лицензии GNU
 вместе с этой программой. Если это не так, см.
 <http://www.gnu.org/licenses/>.
+
+This file is part of Staj.
+
+Staj is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Staj is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Staj.  If not, see <http://www.gnu.org/licenses/>.
 }
 unit mainstaj;
 
@@ -40,8 +40,8 @@ unit mainstaj;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, EditBtn,
-  Spin, StdCtrls, Buttons, MaskEdit, ExtCtrls;
+  Classes, SysUtils, FileUtil, DateTimePicker, Forms, Controls,
+  Graphics, Dialogs, EditBtn, Spin, StdCtrls, Buttons, MaskEdit, ExtCtrls;
 
 type
 
@@ -51,25 +51,33 @@ type
   TForm1 = class(TForm)
     Button1: TButton;
     Button2: TButton;
+    DateEdit1: TDateEdit;
     Edit1: TEdit;
+    GroupBox1: TGroupBox;
     Label1: TLabel;
     Label2: TLabel;
     ListBox1: TListBox;
     Memo1: TMemo;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    Panel3: TPanel;
     ScrollBox1: TScrollBox;
     SpeedButton1: TSpeedButton;
     SpeedButton2: TSpeedButton;
     SpinEdit1: TSpinEdit;
+    Splitter1: TSplitter;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure DateEdit1KeyPress(Sender: TObject; var Key: char);
     procedure FormCreate(Sender: TObject);
     procedure ListBox1Click(Sender: TObject);
+    procedure ListBox1KeyPress(Sender: TObject; var Key: char);
     procedure SpeedButton1Click(Sender: TObject);
     procedure SpeedButton2Click(Sender: TObject);
     procedure SpinEdit1Change(Sender: TObject);
   private
     { private declarations }
+    tf: TFormatSettings;
   public
     DateEditOT: adateedit;
     DateEditDO: adateedit;
@@ -86,7 +94,47 @@ var
 
 implementation
 
+uses resource, versiontypes, versionresource;
+
 {$R *.lfm}
+
+function resourceVersionInfo: string;
+
+  (* Unlike most of AboutText (below), this takes significant activity at run-    *)
+  (* time to extract version/release/build numbers from resource information      *)
+  (* appended to the binary.                                                      *)
+
+var
+  Stream: TResourceStream;
+  vr: TVersionResource;
+  fi: TVersionFixedInfo;
+
+begin
+  Result := '';
+  try
+
+    (* This raises an exception if version info has not been incorporated into the  *)
+    (* binary (Lazarus Project -> Project Options -> Version Info -> Version        *)
+    (* numbering).                                                                  *)
+
+    Stream := TResourceStream.CreateFromID(HINSTANCE, 1, PChar(RT_VERSION));
+    try
+      vr := TVersionResource.Create;
+      try
+        vr.SetCustomRawDataStream(Stream);
+        fi := vr.FixedInfo;
+        Result := IntToStr(fi.FileVersion[0]) + '.' + IntToStr(fi.FileVersion[1]) +
+          '.' + IntToStr(fi.FileVersion[2]) + '.' + IntToStr(fi.FileVersion[3]);
+        vr.SetCustomRawDataStream(nil)
+      finally
+        vr.Free
+      end
+    finally
+      Stream.Free
+    end
+  except
+  end;
+end { resourceVersionInfo };
 
 { TForm1 }
 
@@ -100,10 +148,41 @@ begin
 end;
 
 procedure TForm1.Button1Click(Sender: TObject);
+type
+  TElementDati = (god, mesats, den);
 var
   i: integer;
-  d1, d2, m1, m2, g1, g2, d, m, l, dp, mp, lp: integer;
-  datestr: string;
+  dm, d, m, g, ds, dp: integer;
+
+  procedure DvGMD(dm: integer; var g, m, d: integer);
+  begin
+    g := dm div 360;
+    m := (dm mod 360) div 30;
+    d := dm mod 30;
+  end;
+
+  function FormaGDM(e: TElementDati; k: integer): string;
+  const
+    mform: array [god..den, 1..3] of
+      string = (('год', 'года', 'лет'), ('месяц', 'месяца', 'месяцев'),
+      ('день', 'дня', 'дней'));
+  var
+    fs: byte;//Форма слова
+  begin
+    if ((k mod 100) div 10) = 1 then
+      fs := 3
+    else
+    begin
+      case k mod 10 of
+        1: fs := 1;
+        2..4: fs := 2;
+        else
+          fs := 3;
+      end;
+    end;
+    Result := mform[e, fs];
+  end;
+
 begin
   {
                            ПОСТАНОВЛЕНИЕ
@@ -120,108 +199,37 @@ begin
   и (или) иной деятельности и иных периодов переводятся в  месяцы,  а
   каждые 12 месяцев этих периодов переводятся в полные годы.
   }
-
-  d := 0;
-  m := 0;
-  l := 0;
+  ds := 0;
   dp := 0;
-  mp := 0;
-  lp := 0;
   for i := 1 to kol do
   begin
-    datestr := DateEditOT[i].Text;
-    d1 := StrToIntDef(Copy(datestr, 1, 2), 0);
-    m1 := StrToIntDef(copy(datestr, 4, 2), 0);
-    g1 := StrToIntDef(copy(datestr, 7, 4), 0);
-    datestr := DateEditDO[i].Text;
-    d2 := StrToIntDef(Copy(datestr, 1, 2), 0);
-    m2 := StrToIntDef(copy(datestr, 4, 2), 0);
-    g2 := StrToIntDef(copy(datestr, 7, 4), 0);
-    if g2 >= g1 then
+    {Подсчет   продолжительности   каждого   периода,   включаемого
+    (засчитываемого) в страховой стаж, производится путем вычитания  из
+    даты окончания соответствующего периода даты начала этого периода с
+    прибавлением одного дня.}
+    dm := round(DateEditDO[i].Date - DateEditOT[i].Date);
+    if (DateEditDO[i].Date > 0) and (DateEditOT[i].Date > 0) then
+      Inc(dm);
+    if dm >= 0 then
     begin
-      {Подсчет   продолжительности   каждого   периода,   включаемого
-      (засчитываемого) в страховой стаж, производится путем вычитания  из
-      даты окончания соответствующего периода даты начала этого периода с
-      прибавлением одного дня.}
-      d2 := d2 - d1 + 1;
-      if d2 < 0 then
-      begin
-        Dec(m2);
-        Inc(d2, 30);
-      end;
-      if m2 < 0 then
-      begin
-        Dec(g2);
-        Inc(m2, 12);
-      end;
-      m2 := m2 - m1;
-      if m2 < 0 then
-      begin
-        Dec(g2);
-        Inc(m2, 12);
-      end;
-      g2 := g2 - g1;
-    end
-    else
-      g2 := -1;
-    if g2 >= 0 then
-      srok[i].Caption := IntToStr(g2) + ' лет ' + IntToStr(m2) +
-        ' мес. ' + IntToStr(d2) + ' дней ';
-
-
-    if CheckRas[i].Checked then
-    begin
-      if g2 >= 0 then
-      begin
-        l := l + g2;
-        m := m + m2;
-        if m >= 12 then
-        begin
-          Inc(l);
-          Dec(m, 12);
-        end;
-        d := d + d2;
-        if d >= 30 then
-        begin
-          Inc(m);
-          Dec(d, 30);
-        end;
-        if m >= 12 then
-        begin
-          Inc(l);
-          Dec(m, 12);
-        end;
-      end;
-    end;
-    if CheckDop[i].Checked then
-    begin
-      if g2 >= 0 then
-      begin
-        lp := lp + g2;
-        mp := mp + m2;
-        if mp >= 12 then
-        begin
-          Inc(lp);
-          Dec(mp, 12);
-        end;
-        dp := dp + d2;
-        if dp >= 30 then
-        begin
-          Inc(mp);
-          Dec(dp, 30);
-        end;
-        if m >= 12 then
-        begin
-          Inc(lp);
-          Dec(mp, 12);
-        end;
-      end;
+      DvGMD(dm, g, m, d);
+      srok[i].Caption := IntToStr(g) + ' ' + FormaGDM(god, g) + ' ' +
+        IntToStr(m) + ' ' + FormaGDM(mesats, m) + ' ' + IntToStr(d) +
+        ' ' + FormaGDM(den, d) + ' ';
+      if CheckRas[i].Checked then
+        Inc(ds, dm);
+      if CheckDop[i].Checked then
+        Inc(dp, dm);
     end;
   end;
-  Label1.Caption := IntToStr(l) + ' лет ' + IntToStr(m) + ' месяцев ' +
-    IntToStr(d) + ' дней ';
-  Label2.Caption := IntToStr(lp) + ' лет ' + IntToStr(mp) + ' месяцев ' +
-    IntToStr(dp) + ' дней ';
+  DvGMD(ds, g, m, d);
+  Label1.Caption := IntToStr(g) + ' ' + FormaGDM(god, g) + ' ' +
+    IntToStr(m) + ' ' + FormaGDM(mesats, m) + ' ' + IntToStr(d) +
+    ' ' + FormaGDM(den, d) + ' ';
+  DvGMD(dp, g, m, d);
+  Label2.Caption := IntToStr(g) + ' ' + FormaGDM(god, g) + ' ' +
+    IntToStr(m) + ' ' + FormaGDM(mesats, m) + ' ' + IntToStr(d) +
+    ' ' + FormaGDM(den, d) + ' ';
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
@@ -245,6 +253,9 @@ var
   searchResult: TSearchRec;
   s: string;
 begin
+  Form1.Caption := Form1.Caption + ' ' + resourceVersionInfo;
+  tf.DateSeparator := '.';
+  tf.ShortDateFormat := 'dd/mm/yyyy';
   if FindFirst('dat/*.dat', faAnyFile, searchResult) = 0 then
   begin
     repeat
@@ -256,72 +267,7 @@ begin
     until FindNext(searchResult) <> 0;
     FindClose(searchResult);
   end;
-  kol := 1;
-  try
-    nomer[1] := TLabel.Create(ScrollBox1);
-    nomer[1].Parent := ScrollBox1;
-    nomer[1].Left := 2;
-    nomer[1].Top := 12;
-    nomer[1].Caption := '1.';
-  except
-    nomer[1].Free;
-  end;
-  try
-    DateEditOT[1] := TDateEdit.Create(ScrollBox1);
-    DateEditOT[1].Parent := ScrollBox1;
-    //DateEditOT[1].Width:=115;
-    DateEditOT[1].Left := 8 + 12;
-    DateEditOT[1].Top := 8;
-    DateEditOT[1].TabOrder := 0;
-    DateEditOT[1].DateOrder := doDMY;
-    DateEditOT[1].OnKeyPress := @DateEdit1KeyPress;
-    DateEditOT[1].ButtonOnlyWhenFocused := True;
-  except
-    DateEditOT[1].Free;
-  end;
-  try
-    DateEditDO[1] := TDateEdit.Create(ScrollBox1);
-    DateEditDO[1].Parent := ScrollBox1;
-    //DateEditDO[1].Width:=115;
-    DateEditDO[1].Left := 120 + 12;
-    DateEditDO[1].Top := 8;
-    DateEditDO[1].TabOrder := 1;
-    DateEditDO[1].DateOrder := doDMY;
-    DateEditDO[1].OnKeyPress := @DateEdit1KeyPress;
-    DateEditDO[1].ButtonOnlyWhenFocused := True;
-  except
-    DateEditDO[1].Free;
-  end;
-  try
-    CheckRas[1] := TCheckBox.Create(ScrollBox1);
-    CheckRas[1].Parent := ScrollBox1;
-    CheckRas[1].Left := 230 + 12;
-    CheckRas[1].Top := 8;
-    CheckRas[1].Caption := '';
-    CheckRas[1].TabStop := False;
-    CheckRas[1].Checked := True;
-  except
-    CheckRas[1].Free;
-  end;
-  try
-    CheckDop[1] := TCheckBox.Create(ScrollBox1);
-    CheckDop[1].Parent := ScrollBox1;
-    CheckDop[1].Left := 250 + 12;
-    CheckDop[1].Top := 8;
-    CheckDop[1].Caption := '';
-    CheckDop[1].TabStop := False;
-  except
-    CheckDop[1].Free;
-  end;
-  try
-    srok[1] := TLabel.Create(ScrollBox1);
-    srok[1].Parent := ScrollBox1;
-    srok[1].Left := 280 + 12;
-    srok[1].Top := 12;
-    srok[1].Caption := '';
-  except
-    srok[1].Free;
-  end;
+  kol := 0;
   SpinEdit1.Value := 20;
   SpinEdit1Change(Sender);
 end;
@@ -329,6 +275,12 @@ end;
 procedure TForm1.ListBox1Click(Sender: TObject);
 begin
   Edit1.Text := ListBox1.Items.Strings[ListBox1.ItemIndex];
+end;
+
+procedure TForm1.ListBox1KeyPress(Sender: TObject; var Key: char);
+begin
+  if Key = #13 then
+    SpeedButton2Click(Sender);
 end;
 
 procedure TForm1.SpeedButton1Click(Sender: TObject);
@@ -368,8 +320,8 @@ begin
     ShowMessage('Укажите что загружать!');
     exit;
   end;
-  if MessageDlg('Подтверждение', 'Открыть даты под именем "' + edit1.Text +
-    '"?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+  {if MessageDlg('Подтверждение', 'Открыть даты под именем "' + edit1.Text +
+    '"?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then}
   begin
     Button2Click(Sender);
     Memo1.Clear;
@@ -398,7 +350,7 @@ begin
   begin
     for i := kol + 1 to SpinEdit1.Value do
     begin
-      v := 8 + (8 + DateEditOT[1].Height) * (i - 1);
+      v := 8 + (8 + DateEdit1.Height) * (i - 1);
       try
         nomer[i] := TLabel.Create(ScrollBox1);
         nomer[i].Parent := ScrollBox1;
@@ -411,7 +363,7 @@ begin
       try
         DateEditOT[i] := TDateEdit.Create(ScrollBox1);
         DateEditOT[i].Parent := ScrollBox1;
-        //DateEditOT[i].Width:=115;
+        DateEditOT[i].Width := 110;
         DateEditOT[i].Left := 8 + 12;
         DateEditOT[i].Top := v;
         DateEditOT[i].TabOrder := (i - 1) * 2;
@@ -424,7 +376,7 @@ begin
       try
         DateEditDO[i] := TDateEdit.Create(ScrollBox1);
         DateEditDO[i].Parent := ScrollBox1;
-        //DateEditDO[i].Width:=115;
+        DateEditDO[i].Width := 110;
         DateEditDO[i].Left := 120 + 12;
         DateEditDO[i].Top := v;
         DateEditDO[i].TabOrder := (i - 1) * 2 + 1;
