@@ -1,4 +1,6 @@
 {
+"Стаж" - программа для рассчёта стажа по трудовой книжке
+
 Copyright 2015, 2016 Проскурнев Артем Сергеевич
 
 Этот файл — часть программы Стаж.
@@ -65,6 +67,7 @@ type
     ScrollBox1: TScrollBox;
     SpeedButton1: TSpeedButton;
     SpeedButton2: TSpeedButton;
+    SpeedButton3: TSpeedButton;
     SpinEdit1: TSpinEdit;
     Splitter1: TSplitter;
     procedure Button1Click(Sender: TObject);
@@ -75,6 +78,7 @@ type
     procedure ListBox1KeyPress(Sender: TObject; var Key: char);
     procedure SpeedButton1Click(Sender: TObject);
     procedure SpeedButton2Click(Sender: TObject);
+    procedure SpeedButton3Click(Sender: TObject);
     procedure SpinEdit1Change(Sender: TObject);
   private
     { private declarations }
@@ -95,7 +99,7 @@ var
 
 implementation
 
-uses resource, versiontypes, versionresource;
+uses resource, versiontypes, versionresource, stajabout;
 
 {$R *.lfm}
 
@@ -209,7 +213,7 @@ begin
     даты окончания соответствующего периода даты начала этого периода с
     прибавлением одного дня.}
     dm := round(DateEditDO[i].Date - DateEditOT[i].Date);
-    if (DateEditDO[i].Date > 0) and (DateEditOT[i].Date > 0) then
+    if (DateEditDO[i].Date <> 0) and (DateEditOT[i].Date <> 0) then
       Inc(dm);
     if dm >= 0 then
     begin
@@ -336,6 +340,18 @@ begin
       CheckRas[i].Checked := StrToBool(memo1.Lines.Strings[i * 4 - 1]);
       CheckDop[i].Checked := StrToBool(memo1.Lines.Strings[i * 4]);
     end;
+  end;
+end;
+
+procedure TForm1.SpeedButton3Click(Sender: TObject);
+var
+  a:TForm2;
+begin
+  a:=TForm2.Create(Form1);
+  try
+    a.ShowModal;
+  finally
+    a.Free;
   end;
 end;
 

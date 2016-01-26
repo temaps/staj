@@ -1,4 +1,6 @@
 {
+"Стаж" - программа для рассчёта стажа по трудовой книжке
+
 Copyright 2015, 2016 Проскурнев Артем Сергеевич
 
 Этот файл — часть программы Стаж.
@@ -42,7 +44,7 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, datetimectrls, mainstaj
+  Forms, datetimectrls, mainstaj, stajabout
   { you can add units after this };
 
 {$R *.res}
