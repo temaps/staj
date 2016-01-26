@@ -42,8 +42,9 @@ unit mainstaj;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, DateTimePicker, Forms, Controls,
-  Graphics, Dialogs, EditBtn, Spin, StdCtrls, Buttons, MaskEdit, ExtCtrls;
+  Classes, SysUtils, FileUtil, DateTimePicker, PrintersDlgs, LR_Class, LR_DSet,
+  LR_Desgn, Forms, Controls, Graphics, Dialogs, EditBtn, Spin, StdCtrls,
+  Buttons, MaskEdit, ExtCtrls, Printers, Grids;
 
 type
 
@@ -51,10 +52,14 @@ type
   adateedit = array[1..200] of TDateEdit;
 
   TForm1 = class(TForm)
+    BitBtn1: TBitBtn;
     Button1: TButton;
     Button2: TButton;
     DateEdit1: TDateEdit;
     Edit1: TEdit;
+    frDesigner1: TfrDesigner;
+    frReport1: TfrReport;
+    frUserDataset1: TfrUserDataset;
     GroupBox1: TGroupBox;
     Label1: TLabel;
     Label2: TLabel;
@@ -64,21 +69,30 @@ type
     Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
+    PrintDialog1: TPrintDialog;
     ScrollBox1: TScrollBox;
     SpeedButton1: TSpeedButton;
     SpeedButton2: TSpeedButton;
     SpeedButton3: TSpeedButton;
+    SpeedButton4: TSpeedButton;
     SpinEdit1: TSpinEdit;
     Splitter1: TSplitter;
+    StringGrid1: TStringGrid;
+    procedure BitBtn1Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure DateEdit1KeyPress(Sender: TObject; var Key: char);
     procedure FormCreate(Sender: TObject);
+    procedure frReport1GetValue(const ParName: string; var ParValue: variant);
+    procedure frUserDataset1CheckEOF(Sender: TObject; var EOF: boolean);
+    procedure frUserDataset1First(Sender: TObject);
+    procedure frUserDataset1Next(Sender: TObject);
     procedure ListBox1Click(Sender: TObject);
     procedure ListBox1KeyPress(Sender: TObject; var Key: char);
     procedure SpeedButton1Click(Sender: TObject);
     procedure SpeedButton2Click(Sender: TObject);
     procedure SpeedButton3Click(Sender: TObject);
+    procedure SpeedButton4Click(Sender: TObject);
     procedure SpinEdit1Change(Sender: TObject);
   private
     { private declarations }
@@ -157,7 +171,7 @@ type
   TElementDati = (god, mesats, den);
 var
   i: integer;
-  dm, d, m, g, ds, dp: integer;
+  dm, ds, dp: integer;
 
   procedure DvGMD(dm: integer; var g, m, d: integer);
   begin
@@ -186,6 +200,21 @@ var
       end;
     end;
     Result := mform[e, fs];
+  end;
+
+  procedure resultat(ds: integer; var nadpis: TLabel);
+  var
+    d, g, m: integer;
+  begin
+    if ds = 0 then
+      nadpis.Caption := ''
+    else
+    begin
+      DvGMD(ds, g, m, d);
+      nadpis.Caption := IntToStr(g) + ' ' + FormaGDM(god, g) + ' ' +
+        IntToStr(m) + ' ' + FormaGDM(mesats, m) + ' ' + IntToStr(d) +
+        ' ' + FormaGDM(den, d);
+    end;
   end;
 
 begin
@@ -217,24 +246,51 @@ begin
       Inc(dm);
     if dm >= 0 then
     begin
-      DvGMD(dm, g, m, d);
-      srok[i].Caption := IntToStr(g) + ' ' + FormaGDM(god, g) + ' ' +
-        IntToStr(m) + ' ' + FormaGDM(mesats, m) + ' ' + IntToStr(d) +
-        ' ' + FormaGDM(den, d) + ' ';
+      resultat(dm, srok[i]);
       if CheckRas[i].Checked then
         Inc(ds, dm);
       if CheckDop[i].Checked then
         Inc(dp, dm);
     end;
   end;
-  DvGMD(ds, g, m, d);
-  Label1.Caption := IntToStr(g) + ' ' + FormaGDM(god, g) + ' ' +
-    IntToStr(m) + ' ' + FormaGDM(mesats, m) + ' ' + IntToStr(d) +
-    ' ' + FormaGDM(den, d) + ' ';
-  DvGMD(dp, g, m, d);
-  Label2.Caption := IntToStr(g) + ' ' + FormaGDM(god, g) + ' ' +
-    IntToStr(m) + ' ' + FormaGDM(mesats, m) + ' ' + IntToStr(d) +
-    ' ' + FormaGDM(den, d) + ' ';
+  resultat(ds, Label1);
+  resultat(dp, Label2);
+end;
+
+procedure TForm1.BitBtn1Click(Sender: TObject);
+var
+  i, v: integer;
+begin
+  StringGrid1.RowCount := ListBox1.Items.Count + 1;
+  for i := 0 to ListBox1.Items.Count - 1 do
+  begin
+    Edit1.Text := ListBox1.Items[i];
+    SpeedButton2Click(Sender);
+    Button1Click(Sender);
+    StringGrid1.Cells[0, i] := Edit1.Text;
+    StringGrid1.Cells[1, i] := Label1.Caption;
+    StringGrid1.Cells[2, i] := Label2.Caption;
+  end;
+  frReport1.ShowReport;
+  {if PrintDialog1.Execute then
+  begin
+    try
+      Printer.BeginDoc;
+      Printer.Canvas.Font.Size := 10;
+      Printer.Canvas.Font.Color := clBlack;
+      v := Round(1.2 * Abs(Printer.Canvas.TextHeight('I')));
+      for i := 0 to ListBox1.Items.Count - 1 do
+      begin
+        Edit1.Text := ListBox1.Items[i];
+        SpeedButton2Click(Sender);
+        Button1Click(Sender);
+        Printer.Canvas.TextOut(10, (i + 1) * v, Edit1.Text + ' общий стаж: ' +
+          Label1.Caption + '; выделенный стаж: ' + Label2.Caption);
+      end;
+    finally
+      Printer.EndDoc;
+    end;
+  end;}
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
@@ -258,6 +314,7 @@ var
   searchResult: TSearchRec;
   s: string;
 begin
+  frReport1.LoadFromFile(UTF8ToSys('отчёт.lrf'));
   Form1.Caption := Form1.Caption + ' ' + resourceVersionInfo;
   tf.DateSeparator := '.';
   tf.ShortDateFormat := 'dd/mm/yyyy';
@@ -275,6 +332,31 @@ begin
   kol := 0;
   SpinEdit1.Value := 20;
   SpinEdit1Change(Sender);
+end;
+
+procedure TForm1.frReport1GetValue(const ParName: string; var ParValue: variant);
+begin
+  if ParName = 'ФИО' then
+    ParValue := StringGrid1.Cells[0, StringGrid1.Row]
+  else if ParName = 'Стаж' then
+    ParValue := StringGrid1.Cells[1, StringGrid1.Row]
+  else if ParName = 'Выделенный стаж' then
+    ParValue := StringGrid1.Cells[2, StringGrid1.Row];
+end;
+
+procedure TForm1.frUserDataset1CheckEOF(Sender: TObject; var EOF: boolean);
+begin
+  EOF := StringGrid1.Row >= (StringGrid1.RowCount - 1);
+end;
+
+procedure TForm1.frUserDataset1First(Sender: TObject);
+begin
+  StringGrid1.Row := 0;
+end;
+
+procedure TForm1.frUserDataset1Next(Sender: TObject);
+begin
+  StringGrid1.Row := StringGrid1.Row + 1;
 end;
 
 procedure TForm1.ListBox1Click(Sender: TObject);
@@ -320,7 +402,7 @@ procedure TForm1.SpeedButton2Click(Sender: TObject);
 var
   i: integer;
 begin
-  if edit1.Text = '' then
+  if Edit1.Text = '' then
   begin
     ShowMessage('Укажите что загружать!');
     exit;
@@ -330,7 +412,7 @@ begin
   begin
     Button2Click(Sender);
     Memo1.Clear;
-    Memo1.Lines.LoadFromFile(UTF8Decode('dat/' + edit1.Text + '.dat'));
+    Memo1.Lines.LoadFromFile(UTF8Decode('dat/' + Edit1.Text + '.dat'));
     SpinEdit1.Value := StrToInt(Memo1.Lines.Strings[0]);
     SpinEdit1Change(Sender);
     for i := 1 to kol do
@@ -345,14 +427,19 @@ end;
 
 procedure TForm1.SpeedButton3Click(Sender: TObject);
 var
-  a:TForm2;
+  a: TForm2;
 begin
-  a:=TForm2.Create(Form1);
+  a := TForm2.Create(Form1);
   try
     a.ShowModal;
   finally
     a.Free;
   end;
+end;
+
+procedure TForm1.SpeedButton4Click(Sender: TObject);
+begin
+  frReport1.DesignReport;
 end;
 
 procedure TForm1.SpinEdit1Change(Sender: TObject);
