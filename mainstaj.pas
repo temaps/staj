@@ -1,5 +1,4 @@
-{
-"Стаж" - программа для рассчёта стажа по трудовой книжке
+{"Стаж" - программа для рассчёта стажа по трудовой книжке
 
 Copyright 2015, 2016 Проскурнев Артем Сергеевич
 
@@ -33,8 +32,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Staj.  If not, see <http://www.gnu.org/licenses/>.
-}
+along with Staj.  If not, see <http://www.gnu.org/licenses/>.}
 unit mainstaj;
 
 {$mode objfpc}{$H+}
@@ -118,24 +116,13 @@ uses resource, versiontypes, versionresource, stajabout;
 {$R *.lfm}
 
 function resourceVersionInfo: string;
-
-  (* Unlike most of AboutText (below), this takes significant activity at run-    *)
-  (* time to extract version/release/build numbers from resource information      *)
-  (* appended to the binary.                                                      *)
-
 var
   Stream: TResourceStream;
   vr: TVersionResource;
   fi: TVersionFixedInfo;
-
 begin
   Result := '';
   try
-
-    (* This raises an exception if version info has not been incorporated into the  *)
-    (* binary (Lazarus Project -> Project Options -> Version Info -> Version        *)
-    (* numbering).                                                                  *)
-
     Stream := TResourceStream.CreateFromID(HINSTANCE, 1, PChar(RT_VERSION));
     try
       vr := TVersionResource.Create;
@@ -153,7 +140,7 @@ begin
     end
   except
   end;
-end { resourceVersionInfo };
+end;
 
 { TForm1 }
 

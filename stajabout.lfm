@@ -25,7 +25,7 @@ object Form2: TForm2
       Width = 690
       Align = alClient
       Alignment = taCenter
-      Caption = 'Проскурнёв Артём Сергеевич (tema@proskurnev.name)'#10'Программа распространяется под лицензией GPLv3'
+      Caption = 'Проскурнёв Артём Сергеевич (tema@proskurnev.name, solvpro.ru)'#10'Программа распространяется под лицензией GPLv3'
       Font.Height = -19
       ParentColor = False
       ParentFont = False

@@ -1,5 +1,4 @@
-{
-"Стаж" - программа для рассчёта стажа по трудовой книжке
+{"Стаж" - программа для рассчёта стажа по трудовой книжке
 
 Copyright 2015, 2016 Проскурнев Артем Сергеевич
 
@@ -33,8 +32,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Staj.  If not, see <http://www.gnu.org/licenses/>.
-}
+along with Staj.  If not, see <http://www.gnu.org/licenses/>.}
+
 program staj;
 
 {$mode objfpc}{$H+}

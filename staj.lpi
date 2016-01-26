@@ -20,7 +20,7 @@
       <RevisionNr Value="1"/>
       <BuildNr Value="16"/>
       <Language Value="0419"/>
-      <StringTable ProductVersion=""/>
+      <StringTable ProductName="Стаж" ProductVersion=""/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
