@@ -9,7 +9,6 @@
       <Title Value="Стаж"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
-      <Icon Value="0"/>
     </General>
     <i18n>
       <EnableI18N LFM="False"/>
@@ -19,7 +18,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="9"/>
+      <BuildNr Value="10"/>
       <Language Value="0419"/>
       <StringTable ProductVersion=""/>
     </VersionInfo>
