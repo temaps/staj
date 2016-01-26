@@ -56,6 +56,7 @@ type
     GroupBox1: TGroupBox;
     Label1: TLabel;
     Label2: TLabel;
+    Label3: TLabel;
     ListBox1: TListBox;
     Memo1: TMemo;
     Panel1: TPanel;
@@ -389,7 +390,7 @@ begin
       try
         CheckRas[i] := TCheckBox.Create(ScrollBox1);
         CheckRas[i].Parent := ScrollBox1;
-        CheckRas[i].Left := 230 + 12;
+        CheckRas[i].Left := 230 + 15;
         CheckRas[i].Top := v;
         CheckRas[i].Caption := '';
         CheckRas[i].TabStop := False;
@@ -400,7 +401,7 @@ begin
       try
         CheckDop[i] := TCheckBox.Create(ScrollBox1);
         CheckDop[i].Parent := ScrollBox1;
-        CheckDop[i].Left := 250 + 12;
+        CheckDop[i].Left := 250 + 15;
         CheckDop[i].Top := v;
         CheckDop[i].Caption := '';
         CheckDop[i].TabStop := False;
@@ -410,7 +411,7 @@ begin
       try
         srok[i] := TLabel.Create(ScrollBox1);
         srok[i].Parent := ScrollBox1;
-        srok[i].Left := 280 + 12;
+        srok[i].Left := 280 + 15;
         srok[i].Top := v + 4;
         srok[i].Caption := '';
       except
