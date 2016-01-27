@@ -394,6 +394,15 @@ object Form1: TForm1
         ParentColor = False
         ParentFont = False
       end
+      object ProgressBar1: TProgressBar
+        Left = 7
+        Height = 44
+        Top = 40
+        Width = 480
+        Anchors = [akTop, akLeft, akRight]
+        TabOrder = 4
+        Visible = False
+      end
     end
   end
   object Splitter1: TSplitter

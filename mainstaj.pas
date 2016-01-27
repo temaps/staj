@@ -40,9 +40,9 @@ unit mainstaj;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, DateTimePicker, PrintersDlgs, LR_Class, LR_DSet,
+  Classes, SysUtils, FileUtil, PrintersDlgs, LR_Class, LR_DSet,
   LR_Desgn, Forms, Controls, Graphics, Dialogs, EditBtn, Spin, StdCtrls,
-  Buttons, MaskEdit, ExtCtrls, Printers, Grids;
+  Buttons, ExtCtrls, Printers, Grids, ComCtrls;
 
 type
 
@@ -68,6 +68,7 @@ type
     Panel2: TPanel;
     Panel3: TPanel;
     PrintDialog1: TPrintDialog;
+    ProgressBar1: TProgressBar;
     ScrollBox1: TScrollBox;
     SpeedButton1: TSpeedButton;
     SpeedButton2: TSpeedButton;
@@ -246,11 +247,16 @@ end;
 
 procedure TForm1.BitBtn1Click(Sender: TObject);
 var
-  i, v: integer;
+  i: integer;
 begin
   StringGrid1.RowCount := ListBox1.Items.Count + 1;
+  ProgressBar1.Min:=0;
+  ProgressBar1.Max:=ListBox1.Items.Count - 1;
+  ProgressBar1.Visible:=true;
   for i := 0 to ListBox1.Items.Count - 1 do
   begin
+    ProgressBar1.Position:=i;
+    ProgressBar1.Update;
     Edit1.Text := ListBox1.Items[i];
     SpeedButton2Click(Sender);
     Button1Click(Sender);
@@ -258,6 +264,7 @@ begin
     StringGrid1.Cells[1, i] := Label1.Caption;
     StringGrid1.Cells[2, i] := Label2.Caption;
   end;
+  ProgressBar1.Visible:=false;
   frReport1.ShowReport;
   {if PrintDialog1.Execute then
   begin
@@ -399,7 +406,7 @@ begin
   begin
     Button2Click(Sender);
     Memo1.Clear;
-    Memo1.Lines.LoadFromFile(UTF8Decode('dat/' + Edit1.Text + '.dat'));
+    Memo1.Lines.LoadFromFile(UTF8ToSys('dat/' + Edit1.Text + '.dat'));
     SpinEdit1.Value := StrToInt(Memo1.Lines.Strings[0]);
     SpinEdit1Change(Sender);
     for i := 1 to kol do
