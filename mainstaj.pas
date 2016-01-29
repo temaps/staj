@@ -253,7 +253,8 @@ begin
     (засчитываемого) в страховой стаж, производится путем вычитания  из
     даты окончания соответствующего периода даты начала этого периода с
     прибавлением одного дня.}
-    if (DateEditDO[i].Date <> 0) and (DateEditDO[i].Date <> 0) then
+    if (length(trim(DateEditDO[i].Text)) > 4) and
+      (length(trim(DateEditOT[i].Text)) > 4) then
     begin
       if round(DateEditDO[i].Date - DateEditOT[i].Date) >= 0 then
       begin
