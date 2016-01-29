@@ -18,7 +18,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="28"/>
+      <BuildNr Value="29"/>
       <Language Value="0419"/>
       <StringTable ProductName="Стаж" ProductVersion=""/>
     </VersionInfo>

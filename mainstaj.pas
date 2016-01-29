@@ -62,6 +62,7 @@ type
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
+    Label4: TLabel;
     ListBox1: TListBox;
     Memo1: TMemo;
     Panel1: TPanel;
@@ -415,6 +416,7 @@ begin
       memo1.Lines.Append(BoolToStr(CheckRas[i].Checked));
       memo1.Lines.Append(BoolToStr(CheckDop[i].Checked));
     end;
+    Label4.Caption:=Edit1.Text;
     Memo1.Lines.SaveToFile(UTF8ToSys('dat/' + edit1.Text + '.dat'));
     if (ListBox1.Count = 0) or (ListBox1.ItemIndex < 0) or
       (Edit1.Text <> ListBox1.Items.Strings[ListBox1.ItemIndex]) then
@@ -435,6 +437,7 @@ begin
     '"?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then}
   begin
     Button2Click(Sender);
+    Label4.Caption:=Edit1.Text;
     Memo1.Clear;
     Memo1.Lines.LoadFromFile(UTF8ToSys('dat/' + Edit1.Text + '.dat'));
     SpinEdit1.Value := StrToInt(Memo1.Lines.Strings[0]);

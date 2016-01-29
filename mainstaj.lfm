@@ -1,14 +1,14 @@
 object Form1: TForm1
-  Left = 511
+  Left = 319
   Height = 532
-  Top = 131
+  Top = 127
   Width = 750
   Caption = 'Стаж'
   ClientHeight = 532
   ClientWidth = 750
   OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '1.4.4.0'
+  LCLVersion = '1.6.0.2'
   object GroupBox1: TGroupBox
     Left = 502
     Height = 532
@@ -16,13 +16,13 @@ object Form1: TForm1
     Width = 248
     Align = alRight
     Caption = 'Список'
-    ClientHeight = 501
+    ClientHeight = 512
     ClientWidth = 244
     TabOrder = 0
     object ListBox1: TListBox
       Left = 0
-      Height = 397
-      Top = 82
+      Height = 406
+      Top = 84
       Width = 244
       Align = alClient
       ItemHeight = 0
@@ -31,7 +31,6 @@ object Form1: TForm1
       ScrollWidth = 240
       Sorted = True
       TabOrder = 0
-      TopIndex = -1
     end
     object Panel1: TPanel
       Left = 0
@@ -245,7 +244,7 @@ object Form1: TForm1
     end
     object Edit1: TEdit
       Left = 0
-      Height = 21
+      Height = 23
       Top = 61
       Width = 244
       Align = alTop
@@ -254,7 +253,7 @@ object Form1: TForm1
     object SpeedButton3: TSpeedButton
       Left = 0
       Height = 22
-      Top = 479
+      Top = 490
       Width = 244
       Align = alBottom
       Caption = 'О программе'
@@ -272,13 +271,13 @@ object Form1: TForm1
     TabOrder = 1
     object ScrollBox1: TScrollBox
       Left = 1
-      Height = 435
-      Top = 96
+      Height = 417
+      Top = 114
       Width = 495
       HorzScrollBar.Page = 480
       VertScrollBar.Page = 364
       Align = alClient
-      ClientHeight = 431
+      ClientHeight = 413
       ClientWidth = 491
       TabOrder = 0
       object Memo1: TMemo
@@ -304,11 +303,11 @@ object Form1: TForm1
     end
     object Panel3: TPanel
       Left = 1
-      Height = 95
+      Height = 113
       Top = 1
       Width = 495
       Align = alTop
-      ClientHeight = 95
+      ClientHeight = 113
       ClientWidth = 495
       TabOrder = 1
       object Button2: TButton
@@ -345,10 +344,10 @@ object Form1: TForm1
         TabOrder = 2
       end
       object Label1: TLabel
-        Left = 12
-        Height = 19
-        Top = 40
-        Width = 48
+        Left = 7
+        Height = 21
+        Top = 63
+        Width = 40
         Caption = 'Стаж'
         Font.Height = -16
         Font.Style = [fsBold]
@@ -356,10 +355,10 @@ object Form1: TForm1
         ParentFont = False
       end
       object Label2: TLabel
-        Left = 12
-        Height = 19
-        Top = 68
-        Width = 145
+        Left = 7
+        Height = 21
+        Top = 88
+        Width = 127
         Caption = 'Дополнительно'
         Font.Color = clBlue
         Font.Height = -16
@@ -369,7 +368,7 @@ object Form1: TForm1
       end
       object DateEdit1: TDateEdit
         Left = 384
-        Height = 21
+        Height = 23
         Top = 40
         Width = 103
         CalendarDisplaySettings = [dsShowHeadings, dsShowDayNames]
@@ -383,10 +382,10 @@ object Form1: TForm1
         Visible = False
       end
       object Label3: TLabel
-        Left = 260
-        Height = 19
+        Left = 272
+        Height = 21
         Top = 8
-        Width = 81
+        Width = 69
         Alignment = taRightJustify
         Anchors = [akTop, akRight]
         Caption = 'Периоды:'
@@ -395,13 +394,24 @@ object Form1: TForm1
         ParentFont = False
       end
       object ProgressBar1: TProgressBar
-        Left = 7
+        Left = 8
         Height = 44
-        Top = 40
+        Top = 65
         Width = 480
         Anchors = [akTop, akLeft, akRight]
         TabOrder = 4
         Visible = False
+      end
+      object Label4: TLabel
+        Left = 7
+        Height = 21
+        Top = 40
+        Width = 34
+        Caption = 'Имя'
+        Font.Height = -16
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
       end
     end
   end
