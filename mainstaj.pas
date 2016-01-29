@@ -253,21 +253,24 @@ begin
     (засчитываемого) в страховой стаж, производится путем вычитания  из
     даты окончания соответствующего периода даты начала этого периода с
     прибавлением одного дня.}
-    if round(DateEditDO[i].Date - DateEditOT[i].Date) >= 0 then
+    if (DateEditDO[i].Date <> 0) and (DateEditDO[i].Date <> 0) then
     begin
-      DativPromejutok(DateEditOT[i].Date, DateEditDO[i].Date, p);
-      resultat(p, srok[i]);
-      if CheckRas[i].Checked then
+      if round(DateEditDO[i].Date - DateEditOT[i].Date) >= 0 then
       begin
-        Inc(p1.d, p.d);
-        Inc(p1.m, p.m);
-        Inc(p1.g, p.g);
-      end;
-      if CheckDop[i].Checked then
-      begin
-        Inc(p2.d, p.d);
-        Inc(p2.m, p.m);
-        Inc(p2.g, p.g);
+        DativPromejutok(DateEditOT[i].Date, DateEditDO[i].Date, p);
+        resultat(p, srok[i]);
+        if CheckRas[i].Checked then
+        begin
+          Inc(p1.d, p.d);
+          Inc(p1.m, p.m);
+          Inc(p1.g, p.g);
+        end;
+        if CheckDop[i].Checked then
+        begin
+          Inc(p2.d, p.d);
+          Inc(p2.m, p.m);
+          Inc(p2.g, p.g);
+        end;
       end;
     end;
   end;
@@ -416,7 +419,7 @@ begin
       memo1.Lines.Append(BoolToStr(CheckRas[i].Checked));
       memo1.Lines.Append(BoolToStr(CheckDop[i].Checked));
     end;
-    Label4.Caption:=Edit1.Text;
+    Label4.Caption := Edit1.Text;
     Memo1.Lines.SaveToFile(UTF8ToSys('dat/' + edit1.Text + '.dat'));
     if (ListBox1.Count = 0) or (ListBox1.ItemIndex < 0) or
       (Edit1.Text <> ListBox1.Items.Strings[ListBox1.ItemIndex]) then
@@ -437,7 +440,7 @@ begin
     '"?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then}
   begin
     Button2Click(Sender);
-    Label4.Caption:=Edit1.Text;
+    Label4.Caption := Edit1.Text;
     Memo1.Clear;
     Memo1.Lines.LoadFromFile(UTF8ToSys('dat/' + Edit1.Text + '.dat'));
     SpinEdit1.Value := StrToInt(Memo1.Lines.Strings[0]);
