@@ -157,15 +157,34 @@ end;
 procedure TForm1.Button1Click(Sender: TObject);
 type
   TElementDati = (god, mesats, den);
+
+  TPromejutok = record
+    d, m, g: word;
+  end;
+
 var
   i: integer;
-  dm, ds, dp: integer;
+  p1, p2, p: TPromejutok;
 
-  procedure DvGMD(dm: integer; var g, m, d: integer);
+  procedure DativPromejutok(dot, ddo: TDate; var p: TPromejutok);
+  var
+    ptemp: TPromejutok;
   begin
-    g := dm div 360;
-    m := (dm mod 360) div 30;
-    d := dm mod 30;
+    DecodeDate(dot, ptemp.g, ptemp.m, ptemp.d);
+    DecodeDate(ddo, p.g, p.m, p.d);
+    if p.d - (ptemp.d + 1) < 0 then
+    begin
+      Inc(p.d, 30);
+      Dec(p.m);
+      Dec(p.d, (ptemp.d + 1));
+    end;
+    if (p.m - ptemp.m) < 0 then
+    begin
+      Inc(p.m, 12);
+      Dec(p.g);
+      Dec(p.m, ptemp.m);
+    end;
+    Dec(p.g, ptemp.g);
   end;
 
   function FormaGDM(e: TElementDati; k: integer): string;
@@ -190,18 +209,18 @@ var
     Result := mform[e, fs];
   end;
 
-  procedure resultat(ds: integer; var nadpis: TLabel);
-  var
-    d, g, m: integer;
+  procedure resultat(p: TPromejutok; var nadpis: TLabel);
   begin
-    if ds = 0 then
+    if (p.d = 0) and (p.m = 0) and (p.g = 0) then
       nadpis.Caption := ''
     else
     begin
-      DvGMD(ds, g, m, d);
-      nadpis.Caption := IntToStr(g) + ' ' + FormaGDM(god, g) + ' ' +
-        IntToStr(m) + ' ' + FormaGDM(mesats, m) + ' ' + IntToStr(d) +
-        ' ' + FormaGDM(den, d);
+      p.g := p.g + (p.m div 12);
+      p.m := (p.m mod 12) + (p.d div 30);
+      p.d := p.d mod 30;
+      nadpis.Caption := IntToStr(p.g) + ' ' + FormaGDM(god, p.g) +
+        ' ' + IntToStr(p.m) + ' ' + FormaGDM(mesats, p.m) + ' ' +
+        IntToStr(p.d) + ' ' + FormaGDM(den, p.d);
     end;
   end;
 
@@ -221,28 +240,38 @@ begin
   и (или) иной деятельности и иных периодов переводятся в  месяцы,  а
   каждые 12 месяцев этих периодов переводятся в полные годы.
   }
-  ds := 0;
-  dp := 0;
+  p1.d := 0;
+  p1.m := 0;
+  p1.g := 0;
+  p2.d := 0;
+  p2.m := 0;
+  p2.g := 0;
   for i := 1 to kol do
   begin
     {Подсчет   продолжительности   каждого   периода,   включаемого
     (засчитываемого) в страховой стаж, производится путем вычитания  из
     даты окончания соответствующего периода даты начала этого периода с
     прибавлением одного дня.}
-    dm := round(DateEditDO[i].Date - DateEditOT[i].Date);
-    if (DateEditDO[i].Date <> 0) and (DateEditOT[i].Date <> 0) then
-      Inc(dm);
-    if dm >= 0 then
+    if round(DateEditDO[i].Date - DateEditOT[i].Date) >= 0 then
     begin
-      resultat(dm, srok[i]);
+      DativPromejutok(DateEditOT[i].Date, DateEditDO[i].Date, p);
+      resultat(p, srok[i]);
       if CheckRas[i].Checked then
-        Inc(ds, dm);
+      begin
+        Inc(p1.d, p.d);
+        Inc(p1.m, p.m);
+        Inc(p1.g, p.g);
+      end;
       if CheckDop[i].Checked then
-        Inc(dp, dm);
+      begin
+        Inc(p2.d, p.d);
+        Inc(p2.m, p.m);
+        Inc(p2.g, p.g);
+      end;
     end;
   end;
-  resultat(ds, Label1);
-  resultat(dp, Label2);
+  resultat(p1, Label1);
+  resultat(p2, Label2);
 end;
 
 procedure TForm1.BitBtn1Click(Sender: TObject);
@@ -250,13 +279,14 @@ var
   i: integer;
 begin
   StringGrid1.RowCount := ListBox1.Items.Count + 1;
-  ProgressBar1.Min:=0;
-  ProgressBar1.Max:=ListBox1.Items.Count - 1;
-  ProgressBar1.Visible:=true;
+  ProgressBar1.Min := 0;
+  ProgressBar1.Max := ListBox1.Items.Count - 1;
+  ProgressBar1.Visible := True;
   for i := 0 to ListBox1.Items.Count - 1 do
   begin
-    ProgressBar1.Position:=i;
-    ProgressBar1.Update;
+    ProgressBar1.Position := i;
+    if i mod 10 = 0 then
+      ProgressBar1.Update;
     Edit1.Text := ListBox1.Items[i];
     SpeedButton2Click(Sender);
     Button1Click(Sender);
@@ -264,7 +294,7 @@ begin
     StringGrid1.Cells[1, i] := Label1.Caption;
     StringGrid1.Cells[2, i] := Label2.Caption;
   end;
-  ProgressBar1.Visible:=false;
+  ProgressBar1.Visible := False;
   frReport1.ShowReport;
   {if PrintDialog1.Execute then
   begin
