@@ -173,7 +173,7 @@ var
   begin
     DecodeDate(dot, ptemp.g, ptemp.m, ptemp.d);
     DecodeDate(ddo, p.g, p.m, p.d);
-    if p.d - (ptemp.d + 1) < 0 then
+    if p.d - ptemp.d + 1 < 0 then
     begin
       Inc(p.d, 30);
       Dec(p.m);
