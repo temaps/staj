@@ -1,14 +1,14 @@
 object Form1: TForm1
-  Left = 753
+  Left = 773
   Height = 532
-  Top = 173
+  Top = 144
   Width = 750
   Caption = 'Стаж'
   ClientHeight = 532
   ClientWidth = 750
   OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '1.6.0.2'
+  LCLVersion = '1.4.4.0'
   object GroupBox1: TGroupBox
     Left = 502
     Height = 532
@@ -16,13 +16,13 @@ object Form1: TForm1
     Width = 248
     Align = alRight
     Caption = 'Список'
-    ClientHeight = 512
+    ClientHeight = 501
     ClientWidth = 244
     TabOrder = 0
     object ListBox1: TListBox
       Left = 0
-      Height = 406
-      Top = 84
+      Height = 397
+      Top = 82
       Width = 244
       Align = alClient
       ItemHeight = 0
@@ -31,6 +31,7 @@ object Form1: TForm1
       ScrollWidth = 240
       Sorted = True
       TabOrder = 0
+      TopIndex = -1
     end
     object Panel1: TPanel
       Left = 0
@@ -244,7 +245,7 @@ object Form1: TForm1
     end
     object Edit1: TEdit
       Left = 0
-      Height = 23
+      Height = 21
       Top = 61
       Width = 244
       Align = alTop
@@ -253,7 +254,7 @@ object Form1: TForm1
     object SpeedButton3: TSpeedButton
       Left = 0
       Height = 22
-      Top = 490
+      Top = 479
       Width = 244
       Align = alBottom
       Caption = 'О программе'
@@ -346,9 +347,9 @@ object Form1: TForm1
       end
       object Label1: TLabel
         Left = 7
-        Height = 21
+        Height = 19
         Top = 63
-        Width = 40
+        Width = 48
         Caption = 'Стаж'
         Font.Height = -16
         Font.Style = [fsBold]
@@ -357,9 +358,9 @@ object Form1: TForm1
       end
       object Label2: TLabel
         Left = 7
-        Height = 21
+        Height = 19
         Top = 88
-        Width = 127
+        Width = 145
         Caption = 'Дополнительно'
         Font.Color = clBlue
         Font.Height = -16
@@ -369,7 +370,7 @@ object Form1: TForm1
       end
       object DateEdit1: TDateEdit
         Left = 384
-        Height = 23
+        Height = 21
         Top = 40
         Width = 103
         CalendarDisplaySettings = [dsShowHeadings, dsShowDayNames]
@@ -383,10 +384,10 @@ object Form1: TForm1
         Visible = False
       end
       object Label3: TLabel
-        Left = 272
-        Height = 21
+        Left = 260
+        Height = 19
         Top = 8
-        Width = 69
+        Width = 81
         Alignment = taRightJustify
         Anchors = [akTop, akRight]
         Caption = 'Периоды:'
@@ -405,9 +406,9 @@ object Form1: TForm1
       end
       object Label4: TLabel
         Left = 7
-        Height = 21
+        Height = 19
         Top = 40
-        Width = 34
+        Width = 36
         Caption = 'Имя'
         Font.Height = -16
         Font.Style = [fsBold]

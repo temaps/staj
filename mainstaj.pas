@@ -113,7 +113,7 @@ var
 
 implementation
 
-uses resource, versiontypes, versionresource, stajabout;
+uses resource, versiontypes, versionresource, stajabout, stajnastrprint;
 
 function Translate(Name, Value: ansistring; Hash: longint; arg: pointer): ansistring;
 begin
@@ -342,10 +342,11 @@ end;
 
 procedure TForm1.BitBtn1Click(Sender: TObject);
 var
-  i, sindex: integer;
+  i, sindex, j: integer;
 begin
   if ListBox1.Count > 0 then
   begin
+    Form3.ShowModal;
     sindex := ListBox1.ItemIndex;
     StringGrid1.RowCount := ListBox1.Items.Count + 1;
     ProgressBar1.Min := 0;
@@ -358,7 +359,18 @@ begin
         ProgressBar1.Update;
       Edit1.Text := ListBox1.Items[i];
       SpeedButton2Click(Sender);
-      //Button1Click(Sender);
+      if Form3.CheckBox1.Checked then
+      begin
+        for j := kol downto 1 do
+        begin
+          if (Length(Trim(DateEditDO[j].Text)) > 4) or (j = 1) then
+          begin
+            DateEditDO[j].Text := Form3.DateEdit1.Text;
+            break;
+          end;
+        end;
+        Button1Click(Sender);
+      end;
       StringGrid1.Cells[0, i] := Edit1.Text;
       StringGrid1.Cells[1, i] := Label1.Caption;
       StringGrid1.Cells[2, i] := Label2.Caption;
