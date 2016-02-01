@@ -1,0 +1,59 @@
+object Form3: TForm3
+  Left = 408
+  Height = 116
+  Top = 144
+  Width = 359
+  BorderStyle = bsToolWindow
+  Caption = 'Настройка рассчёта'
+  ClientHeight = 116
+  ClientWidth = 359
+  Position = poMainFormCenter
+  LCLVersion = '1.4.4.0'
+  object CheckBox1: TCheckBox
+    Left = 8
+    Height = 26
+    Top = 8
+    Width = 331
+    Caption = 'Изменить последнюю дату во всех записях'
+    TabOrder = 0
+  end
+  object Label1: TLabel
+    Left = 8
+    Height = 19
+    Top = 46
+    Width = 142
+    Alignment = taRightJustify
+    Caption = 'Последняя дата:'
+    Font.Height = -16
+    ParentColor = False
+    ParentFont = False
+  end
+  object BitBtn1: TBitBtn
+    Left = 128
+    Height = 30
+    Top = 80
+    Width = 75
+    Default = True
+    DefaultCaption = True
+    Kind = bkOK
+    ModalResult = 1
+    TabOrder = 1
+  end
+  object DateEdit1: TDateEdit
+    Left = 160
+    Height = 21
+    Top = 44
+    Width = 103
+    CalendarDisplaySettings = [dsShowHeadings, dsShowDayNames, dsStartMonday]
+    OKCaption = 'OK'
+    CancelCaption = 'Cancel'
+    DefaultToday = True
+    DateOrder = doDMY
+    ButtonOnlyWhenFocused = True
+    ButtonWidth = 23
+    NumGlyphs = 1
+    MaxLength = 10
+    TabOrder = 2
+    Text = '  .  .    '
+  end
+end
