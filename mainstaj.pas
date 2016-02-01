@@ -42,7 +42,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, PrintersDlgs, LR_Class, LR_DSet,
   LR_Desgn, Forms, Controls, Graphics, Dialogs, EditBtn, Spin, StdCtrls,
-  Buttons, ExtCtrls, Printers, Grids, ComCtrls;
+  Buttons, ExtCtrls, Printers, Grids, ComCtrls, LCLProc;
 
 type
 
@@ -115,6 +115,17 @@ implementation
 
 uses resource, versiontypes, versionresource, stajabout;
 
+function Translate(Name, Value: ansistring; Hash: longint; arg: pointer): ansistring;
+begin
+  case StringCase(Value, ['&Yes', '&No', 'Cancel']) of
+    0: Result := '&Да';
+    1: Result := '&Нет';
+    2: Result := 'Отмена';
+    else
+      Result := Value;
+  end;
+end;
+
 {$R *.lfm}
 
 function resourceVersionInfo: string;
@@ -177,14 +188,15 @@ var
     begin
       Inc(p.d, 30);
       Dec(p.m);
-      Dec(p.d, (ptemp.d + 1));
     end;
+    Inc(p.d);
+    Dec(p.d, ptemp.d);
     if (p.m - ptemp.m) < 0 then
     begin
       Inc(p.m, 12);
       Dec(p.g);
-      Dec(p.m, ptemp.m);
     end;
+    Dec(p.m, ptemp.m);
     Dec(p.g, ptemp.g);
   end;
 
@@ -216,8 +228,9 @@ var
       nadpis.Caption := ''
     else
     begin
+      p.m := p.m + (p.d div 30);
       p.g := p.g + (p.m div 12);
-      p.m := (p.m mod 12) + (p.d div 30);
+      p.m := (p.m mod 12);
       p.d := p.d mod 30;
       nadpis.Caption := IntToStr(p.g) + ' ' + FormaGDM(god, p.g) +
         ' ' + IntToStr(p.m) + ' ' + FormaGDM(mesats, p.m) + ' ' +
@@ -326,26 +339,38 @@ end;
 
 procedure TForm1.BitBtn1Click(Sender: TObject);
 var
-  i: integer;
+  i, sindex: integer;
 begin
-  StringGrid1.RowCount := ListBox1.Items.Count + 1;
-  ProgressBar1.Min := 0;
-  ProgressBar1.Max := ListBox1.Items.Count - 1;
-  ProgressBar1.Visible := True;
-  for i := 0 to ListBox1.Items.Count - 1 do
+  if ListBox1.Count > 0 then
   begin
-    ProgressBar1.Position := i;
-    if i mod 10 = 0 then
-      ProgressBar1.Update;
-    Edit1.Text := ListBox1.Items[i];
-    SpeedButton2Click(Sender);
-    Button1Click(Sender);
-    StringGrid1.Cells[0, i] := Edit1.Text;
-    StringGrid1.Cells[1, i] := Label1.Caption;
-    StringGrid1.Cells[2, i] := Label2.Caption;
+    sindex := ListBox1.ItemIndex;
+    StringGrid1.RowCount := ListBox1.Items.Count + 1;
+    ProgressBar1.Min := 0;
+    ProgressBar1.Max := ListBox1.Items.Count - 1;
+    ProgressBar1.Visible := True;
+    for i := 0 to ListBox1.Items.Count - 1 do
+    begin
+      ProgressBar1.Position := i;
+      if i mod 10 = 0 then
+        ProgressBar1.Update;
+      Edit1.Text := ListBox1.Items[i];
+      SpeedButton2Click(Sender);
+      //Button1Click(Sender);
+      StringGrid1.Cells[0, i] := Edit1.Text;
+      StringGrid1.Cells[1, i] := Label1.Caption;
+      StringGrid1.Cells[2, i] := Label2.Caption;
+    end;
+    ProgressBar1.Visible := False;
+    frReport1.ShowReport;
+    if sindex >= 0 then
+    begin
+      ListBox1.ItemIndex := sindex;
+      Edit1.Text := ListBox1.Items[sindex];
+      SpeedButton2Click(Sender);
+      //Button1Click(Sender);
+    end;
   end;
-  ProgressBar1.Visible := False;
-  frReport1.ShowReport;
+
   {if PrintDialog1.Execute then
   begin
     try
@@ -488,15 +513,20 @@ begin
     Button2Click(Sender);
     Label4.Caption := Edit1.Text;
     Memo1.Clear;
-    Memo1.Lines.LoadFromFile(UTF8ToSys('dat/' + Edit1.Text + '.dat'));
-    SpinEdit1.Value := StrToInt(Memo1.Lines.Strings[0]);
-    SpinEdit1Change(Sender);
-    for i := 1 to kol do
-    begin
-      DateEditOT[i].Text := memo1.Lines.Strings[i * 4 - 3];
-      DateEditDO[i].Text := memo1.Lines.Strings[i * 4 - 2];
-      CheckRas[i].Checked := StrToBool(memo1.Lines.Strings[i * 4 - 1]);
-      CheckDop[i].Checked := StrToBool(memo1.Lines.Strings[i * 4]);
+    try
+      Memo1.Lines.LoadFromFile(UTF8ToSys('dat/' + Edit1.Text + '.dat'));
+      SpinEdit1.Value := StrToInt(Memo1.Lines.Strings[0]);
+      SpinEdit1Change(Sender);
+      for i := 1 to kol do
+      begin
+        DateEditOT[i].Text := memo1.Lines.Strings[i * 4 - 3];
+        DateEditDO[i].Text := memo1.Lines.Strings[i * 4 - 2];
+        CheckRas[i].Checked := StrToBool(memo1.Lines.Strings[i * 4 - 1]);
+        CheckDop[i].Checked := StrToBool(memo1.Lines.Strings[i * 4]);
+      end;
+      Button1Click(Sender);
+    except
+      ShowMessage('Проблема с загрузкой файла');
     end;
   end;
 end;
@@ -612,5 +642,8 @@ begin
   end;
   kol := SpinEdit1.Value;
 end;
+
+initialization
+  SetResourceStrings(@Translate, nil);
 
 end.
