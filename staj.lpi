@@ -9,6 +9,7 @@
       <Title Value="Стаж"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
+      <Icon Value="0"/>
     </General>
     <i18n>
       <EnableI18N LFM="False"/>
@@ -18,7 +19,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="31"/>
+      <BuildNr Value="32"/>
       <Language Value="0419"/>
       <StringTable ProductName="Стаж" ProductVersion=""/>
     </VersionInfo>
