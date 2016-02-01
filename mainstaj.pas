@@ -40,7 +40,7 @@ unit mainstaj;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, PrintersDlgs, LR_Class, LR_DSet,
+  Classes, SysUtils, LazUTF8, PrintersDlgs, LR_Class, LR_DSet,
   LR_Desgn, Forms, Controls, Graphics, Dialogs, EditBtn, Spin, StdCtrls,
   Buttons, ExtCtrls, Printers, Grids, ComCtrls, LCLProc;
 
@@ -303,6 +303,9 @@ begin
   http://www.consultant.ru/document/cons_doc_LAW_66787/
   http://www.consultant.ru/law/ref/poleznye-sovety/bolnichyi-list/stag-dlya-rascheta/
   }
+  p.d := 0;
+  p.m := 0;
+  p.g := 0;
   p1.d := 0;
   p1.m := 0;
   p1.g := 0;
