@@ -361,6 +361,7 @@ begin
       SpeedButton2Click(Sender);
       if Form3.CheckBox1.Checked then
       begin
+        //Form3.CheckBox1.Checked:=false;
         for j := kol downto 1 do
         begin
           if (Length(Trim(DateEditDO[j].Text)) > 4) or (j = 1) then
