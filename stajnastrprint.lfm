@@ -8,7 +8,7 @@ object Form3: TForm3
   ClientHeight = 116
   ClientWidth = 359
   Position = poMainFormCenter
-  LCLVersion = '1.4.4.0'
+  LCLVersion = '1.6.0.4'
   object CheckBox1: TCheckBox
     Left = 8
     Height = 26

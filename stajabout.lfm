@@ -7,7 +7,7 @@ object Form2: TForm2
   ClientHeight = 504
   ClientWidth = 694
   Position = poMainFormCenter
-  LCLVersion = '1.4.4.0'
+  LCLVersion = '1.6.0.4'
   object GroupBox1: TGroupBox
     Left = 0
     Height = 81

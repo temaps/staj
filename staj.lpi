@@ -20,7 +20,7 @@
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="2"/>
-      <BuildNr Value="15"/>
+      <BuildNr Value="16"/>
       <Language Value="0419"/>
       <StringTable ProductName="Стаж" ProductVersion=""/>
     </VersionInfo>
@@ -140,6 +140,7 @@
         <Filename Value="stajnastrprint.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Form3"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit3>
     </Units>
